@@ -1,14 +1,5 @@
 <?php
 
-/* Nice regular data for testing */
-$data = array(
-	array(array(2, 4000, 0.5), 2+2+(2*4)+(3*5)),
-	array(array(2, 4000, 0.4), 2+2+(2*4)+(3*4)),
-	array(array(2, 4000, 0.6), 2+2+(2*4)+(3*6)),
-	array(array(1, 5000, 0.5), 2+1+(2*5)+(3*5)),
-	array(array(2, 5000, 0.1), 2+2+(2*5)+(3*1)),
-);
-
 class MVGradient {
 	
 	protected $data;
@@ -182,26 +173,13 @@ class MVGradient {
 
 }
 
-$iterations = array(10, 100, 500, 1000, 2000, 5000, 10000);
-$mvg = new MVGradient();
-$mvg->set_data($data);
-foreach(array(0.1, 0.01, 0.001, 0.001) as $rate) {
-	$mvg->set_learning_rate($rate);
-	foreach($iterations as $i) {
-		$params = $mvg->find_params($i);
-		echo $mvg->score($params), "\n";
-	}
-	echo "\n";
-}
-
-
-/* We have a polynomial example here */
-
+/* Nice regular data for testing */
 $data = array(
-	array(array(2, 2), 1+(3*pow(2, 2))+(2*pow(2, 3))),
-	array(array(3, 3), 1+(3*pow(3, 2))+(2*pow(3, 3))),
-	array(array(4, 4), 1+(3*pow(4, 2))+(2*pow(4, 3))),
-	array(array(5, 5), 1+(3*pow(5, 2))+(2*pow(5, 3))),
+	array(array(2, 4000, 0.5), 2+2+(2*4)+(3*5)),
+	array(array(2, 4000, 0.4), 2+2+(2*4)+(3*4)),
+	array(array(2, 4000, 0.6), 2+2+(2*4)+(3*6)),
+	array(array(1, 5000, 0.5), 2+1+(2*5)+(3*5)),
+	array(array(2, 5000, 0.1), 2+2+(2*5)+(3*1)),
 );
 
 class PolyMV extends MVGradient {
@@ -254,6 +232,31 @@ class PolyMV extends MVGradient {
 		return $params;
 	}
 }
+/*
+
+
+$iterations = array(10, 100, 500, 1000, 2000, 5000, 10000);
+$mvg = new MVGradient();
+$mvg->set_data($data);
+foreach(array(0.1, 0.01, 0.001, 0.001) as $rate) {
+	$mvg->set_learning_rate($rate);
+	foreach($iterations as $i) {
+		$params = $mvg->find_params($i);
+		echo $mvg->score($params), "\n";
+	}
+	echo "\n";
+}
+die();
+
+
+// We have a polynomial example here
+
+$data = array(
+	array(array(2, 2), 1+(3*pow(2, 2))+(2*pow(2, 3))),
+	array(array(3, 3), 1+(3*pow(3, 2))+(2*pow(3, 3))),
+	array(array(4, 4), 1+(3*pow(4, 2))+(2*pow(4, 3))),
+	array(array(5, 5), 1+(3*pow(5, 2))+(2*pow(5, 3))),
+);
 
 $iterations = array(10000);
 $mvg = new PolyMV();
@@ -265,3 +268,4 @@ foreach($iterations as $i) {
 	var_dump($params);
 }
 echo "\n";
+*/
