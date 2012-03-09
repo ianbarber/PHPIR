@@ -2,20 +2,6 @@
 
 /* Triple exponential holt winters smoothing */
 
-// Load in some web stats data
-$fh = fopen("data/webstats.csv", 'r');
-$data = array();
-while($csv = fgetcsv($fh)) {
-    $data[] = $csv[1];
-}
-
-$newdata = holt_winters($data, 30);
-
-// Echo it out in a format to paste into to the charts JS
-foreach($newdata as $key => $d) {
-    echo "data.addRow([" . $key . ", " . (isset($data[$key]) ? $data[$key] : 0) . ", " . $d . "]);\n";
-}
-
 /**
  * Smooth supplied timeline data 3 ways - overall, by trend and by season. 
  *
@@ -86,4 +72,22 @@ function holt_winters($data, $season_length = 7, $alpha = 0.2, $beta = 0.01, $ga
     */
     
     return $holt_winters;
+}
+
+/*************************/
+/*** Use the function ***/
+/*************************/
+
+// Load in some web stats data
+$fh = fopen("data/webstats.csv", 'r');
+$data = array();
+while($csv = fgetcsv($fh)) {
+    $data[] = $csv[1];
+}
+
+$newdata = holt_winters($data, 30);
+
+// Echo it out in a format to paste into to the charts JS
+foreach($newdata as $key => $d) {
+    echo "data.addRow([" . $key . ", " . (isset($data[$key]) ? $data[$key] : 0) . ", " . $d . "]);\n";
 }
