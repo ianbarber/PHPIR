@@ -10,9 +10,10 @@
  * @param float $alpha - data smoothing factor
  * @param float $beta - trend smoothing factor
  * @param float $gamma - seasonality smoothing factor
+ * @param float $dev_gamma - smoothing factor for deviations
  * @return array - the smoothed data
  */
-function holt_winters($data, $season_length = 7, $alpha = 0.2, $beta = 0.01, $gamma = 0.005) {
+function holt_winters($data, $season_length = 7, $alpha = 0.2, $beta = 0.01, $gamma = 0.01, $dev_gamma = 0.1) {
     
     // Calculate an initial trend level
     $trend1 = 0;
@@ -50,7 +51,9 @@ function holt_winters($data, $season_length = 7, $alpha = 0.2, $beta = 0.01, $ga
         $season[$key] *= $season_factor;
     }
     
+    
     $holt_winters = array();
+    $deviations = array();
     $alpha_level = $initial_level;
     $beta_trend = $initial_trend;
     foreach($data as $key => $value) {
@@ -63,6 +66,8 @@ function holt_winters($data, $season_length = 7, $alpha = 0.2, $beta = 0.01, $ga
         $season[$key + $season_length] = $gamma * $value / $alpha_level + (1.0 - $gamma) * $season[$key];
         
         $holt_winters[$key] = ($alpha_level + $beta_trend * ($key + 1)) * $season[$key];
+        $deviations[$key] = $dev_gamma * abs($value - $holt_winters[$key]) + (1-$dev_gamma) 
+                                * (isset($deviations[$key - $season_length]) ? $deviations[$key - $season_length] : 0);
     }
     
     /* Could forecast a bit!
@@ -71,7 +76,7 @@ function holt_winters($data, $season_length = 7, $alpha = 0.2, $beta = 0.01, $ga
     }
     */
     
-    return $holt_winters;
+    return array($holt_winters, $deviations);
 }
 
 /*************************/
@@ -85,9 +90,15 @@ while($csv = fgetcsv($fh)) {
     $data[] = $csv[1];
 }
 
-$newdata = holt_winters($data, 30);
+list($newdata, $deviations) = holt_winters($data, 30);
 
 // Echo it out in a format to paste into to the charts JS
 foreach($newdata as $key => $d) {
-    echo "data.addRow([" . $key . ", " . (isset($data[$key]) ? $data[$key] : 0) . ", " . $d . "]);\n";
+    echo "data.addRow([" . 
+            $key . ", " . 
+            (isset($data[$key]) ? $data[$key] : 0) . ", " . 
+            $d . ", " . 
+            ($d + 3*$deviations[$key]) .", " . 
+            ($d - 3*$deviations[$key]) .", " . 
+            "]);\n";
 }
